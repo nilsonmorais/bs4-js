@@ -1,0 +1,15 @@
+{
+    "name": "@nilsonmorais/bs4-js",
+    "version": "0.0.2",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Nilson Morais",
+    "license": "MIT",
+    "devDependencies": {
+        "grunt": "^1.0.1",
+        "grunt-bump": "^0.8.0"
+    }
+}
