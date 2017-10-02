@@ -1,5 +1,25 @@
 'use strict';
 
+/* 
+
+bs4-js: Bootstrap 4 elements created in js.
+Dependencies: lodash, fontawesome and jquery.
+
+Create new objects:
+var b = new Button();
+var d = new Dropdown();
+
+Call object methods:
+b.setIcon("fa-window");
+
+Access object DOM with:
+$('body').append(b.html);
+
+*/
+
+/**
+ * @class Dropdown
+ */
 function Dropdown() {
     var id = _.uniqueId('dropdown_');
     this.html = $("<div>").addClass("dropdown")
@@ -43,6 +63,9 @@ function Dropdown() {
     return this;
 }
 
+/**
+ * @class Card
+ */
 function Card() {
     var id = _.uniqueId('card_');
     this.html = $("<div>").addClass("card").css("max-width", "500px").attr("id", id);
@@ -71,6 +94,14 @@ function Card() {
     return this;
 }
 
+/**
+ * @class Button
+ * 
+ * @param {Object} options 
+ * @param {String} options.href Button href property, default: "#".
+ * @param {String} options.eleClass Button class property, default: "btn-primary".
+ * @param {String} options.title Button title property, default: none.
+ */
 function Button(options) {
     var id = _.uniqueId('btn_');
     var defaults = {
@@ -90,6 +121,7 @@ function Button(options) {
             "data-placement": "top",
             "title": options.title
         });
+        $(this.html).tooltip();
     }
     this.text = function(text) {
         $(this.html).text(text);
@@ -100,6 +132,5 @@ function Button(options) {
     this.addClass = function(className) {
         $(this.html).addClass(className);
     };
-
     return this;
 }
