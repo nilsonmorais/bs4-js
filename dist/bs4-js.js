@@ -75,7 +75,8 @@ function Button(options) {
     var id = _.uniqueId('btn_');
     var defaults = {
         href: "#",
-        eleClass: "btn-primary"
+        eleClass: "btn-primary",
+        title: undefined
     };
     var options = _.assign(defaults, options);
 
@@ -83,11 +84,21 @@ function Button(options) {
         id: id,
         href: options.href,
     });
+    if (options.title !== undefined) {
+        $(this.html).attr({
+            "data-toggle": "tooltip",
+            "data-placement": "top",
+            "title": options.title
+        });
+    }
     this.text = function(text) {
         $(this.html).text(text);
     };
     this.setIcon = function(icon) {
-        $(this.html).find('a').append($("<i>").addClass("fa " + icon));
+        $(this.html).append($("<i>").addClass("fa fa-fw " + icon));
+    };
+    this.addClass = function(className) {
+        $(this.html).addClass(className);
     };
 
     return this;
