@@ -1,11 +1,11 @@
 {
     "name": "@nilsonmorais/bs4-js",
-    "version": "0.0.40",
+    "version": "0.0.43",
     "description": "",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "pub": "grunt bump && npm publish"
+        "pub": "grunt && grunt bump && npm publish"
     },
     "author": "Nilson Morais",
     "license": "MIT",

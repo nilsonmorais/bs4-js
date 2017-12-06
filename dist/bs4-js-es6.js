@@ -75,7 +75,7 @@ var Card = function () {
             headerClass: "",
             bodyClass: "",
             footerClass: "",
-            className: "card mb-1",
+            classNameDefault: "card mb-1",
             cardSizes: {
                 "xs": "200px",
                 "sm": "300px",
@@ -96,7 +96,7 @@ var Card = function () {
     _createClass(Card, [{
         key: 'render',
         value: function render() {
-            this.html = $("<div>").addClass("card").css("max-width", "500px").attr("id", this.id);
+            this.html = $("<div>").addClass(this.options.classNameDefault).addClass(this.options.className).css("max-width", "500px").attr("id", this.id);
             this.cardContainer = this.html;
             this.setBody(this.options.bodyContent);
             this.setSize(this.options.size);
@@ -165,7 +165,8 @@ var Card = function () {
     }, {
         key: 'setClass',
         value: function setClass(className) {
-            this.html.attr("class", "").addClass(this.options.className).addClass(className);
+            this.options.className = className;
+            this.html.attr("class", "").addClass(this.options.classNameDefault).addClass(className);
         }
     }, {
         key: 'getSize',
