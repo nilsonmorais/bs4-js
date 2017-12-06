@@ -1,22 +1,5 @@
 'use strict';
 
-/* 
-
-bs4-js: Bootstrap 4 elements created in js.
-Dependencies: lodash, fontawesome, jquery-ui and jquery.
-
-Create new objects:
-var b = new Button();
-var d = new Dropdown();
-
-Call object methods:
-b.setIcon("fa-window");
-
-Access object DOM with:
-$('body').append(b.html);
-
-*/
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26,24 +9,45 @@ var Dropdown = function () {
         _classCallCheck(this, Dropdown);
 
         this.id = _.uniqueId('dropdown_');
-        this.html = $("<div>").addClass("dropdown").append($("<button>").addClass("btn btn-secondary btn-sm dropdown-toggle").attr({
+        this.options = _.assign({
+            classNameDefault: "dropdown",
+            className: "",
+            buttonClassNameDefault: "btn btn-secondary btn-sm dropdown-toggle fa",
+            buttonClassName: ""
+        }, options);
+        this.html = $("<div>").append($("<button>").addClass(this.options.buttonClassNameDefault).attr({
             "data-toggle": "dropdown",
             "type": "button",
             "aria-haspopup": "true",
             "aria-expanded": "false",
             "id": this.id
-        })).append($("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id));
+        }), $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id));
+        this.setClass(this.options.className);
+        this.setClassButton(this.options.buttonClassName);
+        this.menu = this.html.find(".dropdown-menu");
     }
 
     _createClass(Dropdown, [{
+        key: 'setClass',
+        value: function setClass(className) {
+            this.options.className = className;
+            this.html.attr("class", "").addClass(this.options.classNameDefault).addClass(this.options.className);
+        }
+    }, {
+        key: 'setClassButton',
+        value: function setClassButton(className) {
+            this.options.buttonClassName = className;
+            this.html.find("button").attr("class", "").addClass(this.options.buttonClassNameDefault).addClass(this.options.buttonClassName);
+        }
+    }, {
         key: 'reset',
         value: function reset() {
-            $(this.html).find(".dropdown-menu").children().remove();
+            this.menu.children().remove();
         }
     }, {
         key: 'setIcon',
         value: function setIcon(icon) {
-            $(this.html).find('button').addClass("fa " + icon);
+            this.setClassButton(icon);
         }
     }, {
         key: 'addItem',
@@ -53,14 +57,30 @@ var Dropdown = function () {
                 title: "Item",
                 header: false
             };
-            item = _.assign(itemDefaults, item);
-            if (item.header) {
-                var _item = $("<h6>").addClass("dropdown-header").text(_item.title);
+            var _item = _.assign(itemDefaults, item);
+            if (_item.header) {
+                _item = $("<h6>").addClass("dropdown-header").text(_item.title);
             } else {
-                var _item2 = $("<a>").addClass("dropdown-item").attr("href", _item2.href).text(_item2.title);
+                _item = $("<a>").addClass("dropdown-item").attr("href", _item.href).text(_item.title);
             }
-            $(this.html).find(".dropdown-menu").append(item);
-            return item;
+            this.menu.append(_item);
+            return _item;
+        }
+    }, {
+        key: 'addHeader',
+        value: function addHeader(title) {
+            var _title = title || "Header";
+            var _item = this.addItem({ title: _title, header: true });
+            return _item;
+        }
+    }, {
+        key: 'setDefault',
+        value: function setDefault(title) {
+            this.menu.children().each(function (element) {
+                if ($(element).text() == title) {
+                    $(element).append($("<i>").addClass("fa fa-check fa-fw text-muted"));
+                }
+            });
         }
     }]);
 
@@ -180,9 +200,9 @@ var Card = function () {
     }, {
         key: 'setSize',
         value: function setSize(size) {
-            var _size = this.options.cardSizes[size] || "300px";
+            var _size = size || "300px";
             this.options.size = _size;
-            $(this.html).css({
+            this.html.css({
                 "max-width": _size,
                 "width": _size
             });
@@ -196,12 +216,13 @@ var Button = function () {
     function Button(options) {
         _classCallCheck(this, Button);
 
-        this.id = _.uniqueId('btn_');
         var defaults = {
             href: "#",
             className: "btn-primary",
             title: undefined,
-            label: ""
+            label: "",
+            classNameDefault: "btn pt-1",
+            id: _.uniqueId('btn_')
         };
         this.options = _.assign(defaults, options);
         this.render();
@@ -210,33 +231,38 @@ var Button = function () {
     _createClass(Button, [{
         key: 'render',
         value: function render() {
-            this.html = $("<a>").addClass('btn').addClass(this.options.className).attr({
-                id: this.id,
+            this.html = null;
+            this.html = $("<a>").attr({
+                id: this.options.id,
                 href: this.options.href
             });
+            this.setClassName(this.options.className);
             if (!_.isEmpty(this.options.label)) {
-                $(this.html).append(this.options.label);
+                this.html.append(this.options.label);
             }
             if (!_.isEmpty(this.options.title)) {
-                $(this.html).attr({
+                this.html.attr({
                     "data-toggle": "tooltip",
                     "data-placement": "top",
                     "title": this.options.title
                 }).tooltip();
             }
             if (!_.isEmpty(this.options.icon)) {
-                $(this.html).prepend($("<i>").addClass("fa fa-fw " + this.options.icon));
+                this.setIcon(this.options.icon);
             }
-        }
-    }, {
-        key: 'text',
-        value: function text(_text) {
-            $(this.html).text(_text);
         }
     }, {
         key: 'setIcon',
         value: function setIcon(icon) {
-            $(this.html).prepend($("<i>").addClass("fa fa-fw " + icon));
+            this.options.icon = icon;
+            this.html.find("i").remove();
+            this.html.prepend($("<i>").addClass("fa fa-fw " + icon));
+        }
+    }, {
+        key: 'setClassName',
+        value: function setClassName(className) {
+            this.options.className = className;
+            this.html.attr("class", "").addClass(this.options.classNameDefault).addClass(this.options.className);
         }
     }]);
 
