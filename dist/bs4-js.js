@@ -17,165 +17,149 @@ $('body').append(b.html);
 
 */
 
-/**
- * @class Dropdown
- */
-function Dropdown() {
-    var id = _.uniqueId('dropdown_');
-    this.html = $("<div>").addClass("dropdown")
-        .append(
-            $("<button>").addClass("btn btn-secondary btn-sm dropdown-toggle")
-            .attr({
-                "data-toggle": "dropdown",
-                "type": "button",
-                "aria-haspopup": "true",
-                "aria-expanded": "false",
-                "id": id
-            })
-        )
-        .append(
-            $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", id)
-        );
-    this.reset = function() {
+class Dropdown {
+    constructor(options){
+        this.id = _.uniqueId('dropdown_');
+        this.html = $("<div>").addClass("dropdown")
+            .append(
+                $("<button>").addClass("btn btn-secondary btn-sm dropdown-toggle")
+                .attr({
+                    "data-toggle": "dropdown",
+                    "type": "button",
+                    "aria-haspopup": "true",
+                    "aria-expanded": "false",
+                    "id": this.id
+                })
+            )
+            .append(
+                $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id)
+            );
+    }
+    reset() {
         $(this.html).find(".dropdown-menu").children().remove();
-    };
-    this.setIcon = function(icon) {
+    }
+    setIcon(icon) {
         $(this.html).find('button').addClass("fa " + icon);
-    };
-    this.addItem = function(item) {
-        var itemDefaults = {
+    }
+    addItem(item) {
+        let itemDefaults = {
             href: "#",
             title: "Item",
             header: false
         };
         item = _.assign(itemDefaults, item);
         if (item.header) {
-            var item = $("<h6>").addClass("dropdown-header").text(item.title);
+            let item = $("<h6>").addClass("dropdown-header").text(item.title);
         } else {
-            var item = $("<a>").addClass("dropdown-item").attr("href", item.href).text(item.title);
+            let item = $("<a>").addClass("dropdown-item").attr("href", item.href).text(item.title);
         }
         $(this.html).find(".dropdown-menu").append(item);
         return item;
-    };
-    return this;
+    }
 }
 
-/**
- * @class Card
- */
-function Card(options) {
-    const _Card = this;
-    var defaults = {
-        headerClass: "",
-        bodyClass: "",
-        footerClass: "",
-        className: "mb-1",
-        cardSizes: {
-            "xs": "200px",
-            "sm": "300px",
-            "md": "500px",
-            "lg": "800px",
-            "max": "100%"
-        },
-        size: "sm",
-        bodyContent: "",
-        onShow: function() {},
-        onHide: function() {},
-    };
-    this.options = _.assign(defaults, this.options);
-    this.options = _.assign(this.options, options);
+class Card {
+    constructor(options){
+        let defaults = {
+            headerClass: "",
+            bodyClass: "",
+            footerClass: "",
+            className: "card mb-1",
+            cardSizes: {
+                "xs": "200px",
+                "sm": "300px",
+                "md": "500px",
+                "lg": "800px",
+                "max": "100%"
+            },
+            size: "sm",
+            bodyContent: "",
+            onShow: function(){},
+            onHide: function(){},
+        }
+        this.options = _.assign(defaults, options);
+        this.id = _.uniqueId('card_');
+        this.render();
+    }
 
-    this.render = function() {
-        var id = _.uniqueId('card_');
-        _Card.html = $("<div>").addClass("card").css("max-width", "500px").attr("id", id);
-        _Card.cardContainer = _Card.html;
-        _Card.setBody(_Card.options.bodyContent);
-        _Card.setSize(_Card.options.size);
-    };
-    this.addHeader = function() {
-        _Card.header = $("<div>").addClass("card-header");
-        if (!_.isEmpty(this.options.headerClass)) { header.addClass(this.options.headerClass); }
-        $(this.html).prepend(_Card.header);
-    };
-    this.addFooter = function() {
-        _Card.footer = $("<div>").addClass("card-footer");
-        if (!_.isEmpty(this.options.footerClass)) { footer.addClass(this.options.footerClass); }
-        $(this.html).append(_Card.footer);
-    };
-    this.addBody = function() {
-        _Card.body = $("<div>").addClass("card-body");
-        if (!_.isEmpty(this.options.bodyClass)) { body.addClass(this.options.bodyClass); }
-        $(this.html).append(_Card.body);
-    };
-    this.setHeader = function(content) {
-        var header = $(this.html).find(".card-header");
-        if (_.isEmpty(header)) {
-            header = _Card.addHeader();
+    render() {
+        this.html = $("<div>").addClass("card").css("max-width", "500px").attr("id", this.id);
+        this.cardContainer = this.html;
+        this.setBody(this.options.bodyContent);
+        this.setSize(this.options.size);
+    }
+    addHeader() {
+        this.header = $("<div>").addClass("card-header");
+        if (!_.isEmpty(this.options.headerClass)) { this.header.addClass(this.options.headerClass); }
+        $(this.html).prepend(this.header);
+    }
+    addFooter() {
+        this.footer = $("<div>").addClass("card-footer");
+        if (!_.isEmpty(this.options.footerClass)) { this.footer.addClass(this.options.footerClass); }
+        $(this.html).append(this.footer);
+    }
+    addBody() {
+        this.body = $("<div>").addClass("card-body");
+        if (!_.isEmpty(this.options.bodyClass)) { this.body.addClass(this.options.bodyClass); }
+        $(this.html).append(this.body);
+    }
+    setHeader(content) {
+        if (_.isEmpty(this.header)) {
+            _Card.addHeader();
         }
-        $(header).html("").append(content);
-    };
-    this.setFooter = function(content) {
-        var footer = $(this.html).find(".card-footer");
-        if (_.isEmpty(footer)) {
-            footer = _Card.addFooter();
+        $(this.header).html("").append(content);
+    }
+    setFooter(content) {
+        if (_.isEmpty(this.footer)) {
+            _Card.addFooter();
         }
-        $(footer).html("").append(content);
-    };
-    this.setBody = function(content) {
-        if (_Card.body == undefined) { _Card.addBody(); }
-        $(_Card.body).html("").append(content);
-    };
-    this.setHeaderClass = function(className) {
-        $(this.html).find(".card-header").attr("class", "").addClass("card-header").addClass(className);
-    };
-    this.setFooterClass = function(className) {
-        $(this.html).find(".card-footer").attr("class", "").addClass("card-footer").addClass(className);
-    };
-    this.setClass = function(className) {
-        $(this.html).attr("class", "").addClass("card").addClass(className);
-    };
-    this.getSize = function() {
-        var s = $(this.html).css("max-width");
-        var r = _.findKey(this.options.cardSizes, function(o) { return o == s });
+        $(this.footer).html("").append(content);
+    }
+    setBody(content) {
+        if (_.isEmpty(this.body)) { this.addBody(); }
+        $(this.body).html("").append(content);
+    }
+    setHeaderClass(className) {
+        this.header.attr("class", "").addClass("card-header").addClass(className);
+    }
+    setFooterClass(className) {
+        this.footer.attr("class", "").addClass("card-footer").addClass(className);
+    }
+    setClass(className) {
+        this.html.attr("class", "").addClass(this.options.className).addClass(className);
+    }
+    getSize() {
+        let s = $(this.html).css("max-width");
+        let r = _.findKey(this.options.cardSizes, function(o) { return o == s });
         return r;
-    };
-    this.setSize = function(size) {
-        var size = this.options.cardSizes[size] || "300px";
-        this.options.size = size;
+    }
+    setSize(size) {
+        let _size = this.options.cardSizes[size] || "300px";
+        this.options.size = _size;
         $(this.html).css({
-            "max-width": size,
-            "width": size
+            "max-width": _size,
+            "width": _size
         });
-    };
-    this.render();
-
-    return this;
+    }
 }
 
 
-/**
- * @class Button
- * 
- * @param {Object} options 
- * @param {String} options.href Button href property, default: "#".
- * @param {String} options.className Button class property, default: "btn-primary".
- * @param {String} options.title Button title property, default: none.
- */
-function Button(options) {
-    var _Button = this;
-    var id = _.uniqueId('btn_');
-    var defaults = {
-        href: "#",
-        className: "btn-primary",
-        title: undefined,
-        label: ""
-    };
-    this.options = _.assign(this.options, defaults);
-    this.options = _.assign(this.options, options);
-
-    this.render = function() {
+class Button {
+    constructor(options){
+        this.id = _.uniqueId('btn_');
+        var defaults = {
+            href: "#",
+            className: "btn-primary",
+            title: undefined,
+            label: ""
+        }
+        this.options = _.assign(defaults, options);
+        this.render();
+    }
+   
+    render() {
         this.html = $("<a>").addClass('btn').addClass(this.options.className).attr({
-            id: id,
+            id: this.id,
             href: this.options.href,
         });
         if (!_.isEmpty(this.options.label)) {
@@ -189,16 +173,14 @@ function Button(options) {
             }).tooltip();
         }
         if (!_.isEmpty(this.options.icon)) {
-            $(this.html).prepend($("<i>").addClass("fa fa-fw " + _Button.options.icon));
+            $(this.html).prepend($("<i>").addClass("fa fa-fw " + this.options.icon));
         }
+    }
 
-    };
-    this.text = function(text) {
+    text(text) {
         $(this.html).text(text);
-    };
-    this.setIcon = function(icon) {
+    }
+    setIcon(icon) {
         $(this.html).prepend($("<i>").addClass("fa fa-fw " + icon));
-    };
-    this.render();
-    return this;
+    }
 }
