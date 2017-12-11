@@ -1,7 +1,7 @@
 'use strict';
 
 class Dropdown {
-    constructor(options){
+    constructor(options) {
         this.id = _.uniqueId('dropdown_');
         this.options = _.assign({
             classNameDefault: "dropdown",
@@ -11,7 +11,7 @@ class Dropdown {
         }, options);
         this.html = $("<div>")
             .append(
-                $("<button>").addClass(this.options.buttonClassNameDefault)
+            $("<button>").addClass(this.options.buttonClassNameDefault)
                 .attr({
                     "data-toggle": "dropdown",
                     "type": "button",
@@ -19,17 +19,17 @@ class Dropdown {
                     "aria-expanded": "false",
                     "id": this.id
                 }),
-                $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id)
+            $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id)
             );
         this.setClass(this.options.className);
         this.setClassButton(this.options.buttonClassName);
         this.menu = this.html.find(".dropdown-menu");
     }
-    setClass(className){
+    setClass(className) {
         this.options.className = className;
         this.html.attr("class", "").addClass(this.options.classNameDefault).addClass(this.options.className);
     }
-    setClassButton(className){
+    setClassButton(className) {
         this.options.buttonClassName = className;
         this.html.find("button").attr("class", "").addClass(this.options.buttonClassNameDefault).addClass(this.options.buttonClassName);
     }
@@ -40,28 +40,30 @@ class Dropdown {
         this.setClassButton(icon);
     }
     addItem(item) {
-        let itemDefaults = {
+        let _itemConfig = _.assign({
             href: "#",
             title: "Item",
-            header: false
-        };
-        let _item = _.assign(itemDefaults, item);
-        if (_item.header) {
-            _item = $("<h6>").addClass("dropdown-header").text(_item.title);
+            header: false,
+            value: undefined
+        }, item);
+        let _item;
+        if (_itemConfig.header) {
+            _item = $("<h6>").addClass("dropdown-header").text(_itemConfig.title);
         } else {
-            _item = $("<a>").addClass("dropdown-item").attr("href", _item.href).text(_item.title);
+            _item = $("<a>").addClass("dropdown-item").attr("href", _itemConfig.href).text(_itemConfig.title).attr('data-value',_itemConfig.value);
         }
         this.menu.append(_item);
         return _item;
     }
-    addHeader(title){
+    addHeader(title) {
         let _title = title || "Header";
         let _item = this.addItem({ title: _title, header: true });
         return _item;
     }
-    setDefault(title){
-        this.menu.children().each(element => {
-            if ($(element).text() == title){
+    setDefault(selectedValue) {
+        this.menu.children('a').each( (key,element) => {
+            console.log(element.text, selectedValue);
+            if ((element.text == selectedValue)|| ($(element).attr("data-value") == selectedValue)) {
                 $(element).append($("<i>").addClass("fa fa-check fa-fw text-muted"));
             }
         });
@@ -69,7 +71,7 @@ class Dropdown {
 }
 
 class Card {
-    constructor(options){
+    constructor(options) {
         let defaults = {
             headerClass: "",
             bodyClass: "",
@@ -84,8 +86,9 @@ class Card {
             },
             size: "sm",
             bodyContent: "",
-            onShow: function(){},
-            onHide: function(){},
+            onShow: () => { },
+            onHide: () => { },
+            postCreateAction: () => { },
         }
         this.options = _.assign(defaults, options);
         this.id = _.uniqueId('card_');
@@ -94,40 +97,42 @@ class Card {
 
     render() {
         this.html = $("<div>").addClass(this.options.classNameDefault).addClass(this.options.className).css("max-width", "500px").attr("id", this.id);
-        this.cardContainer = this.html;
         this.setBody(this.options.bodyContent);
         this.setSize(this.options.size);
+    }
+    postCreate() {
+        this.options.postCreateAction(this);
     }
     addHeader() {
         this.header = $("<div>").addClass("card-header");
         if (!_.isEmpty(this.options.headerClass)) { this.header.addClass(this.options.headerClass); }
-        $(this.html).prepend(this.header);
+        this.html.prepend(this.header);
     }
     addFooter() {
         this.footer = $("<div>").addClass("card-footer");
         if (!_.isEmpty(this.options.footerClass)) { this.footer.addClass(this.options.footerClass); }
-        $(this.html).append(this.footer);
+        this.html.append(this.footer);
     }
     addBody() {
         this.body = $("<div>").addClass("card-body");
         if (!_.isEmpty(this.options.bodyClass)) { this.body.addClass(this.options.bodyClass); }
-        $(this.html).append(this.body);
+        this.html.append(this.body);
     }
     setHeader(content) {
         if (_.isEmpty(this.header)) {
-            _Card.addHeader();
+            this.addHeader();
         }
-        $(this.header).html("").append(content);
+        this.header.html("").append(content);
     }
     setFooter(content) {
         if (_.isEmpty(this.footer)) {
-            _Card.addFooter();
+            this.addFooter();
         }
-        $(this.footer).html("").append(content);
+        this.footer.html("").append(content);
     }
     setBody(content) {
         if (_.isEmpty(this.body)) { this.addBody(); }
-        $(this.body).html("").append(content);
+        this.body.html("").append(content);
     }
     setHeaderClass(className) {
         this.header.attr("class", "").addClass("card-header").addClass(className);
@@ -140,8 +145,8 @@ class Card {
         this.html.attr("class", "").addClass(this.options.classNameDefault).addClass(className);
     }
     getSize() {
-        let s = $(this.html).css("max-width");
-        let r = _.findKey(this.options.cardSizes, function(o) { return o == s });
+        let s = this.html.css("max-width");
+        let r = _.findKey(this.options.cardSizes, function (o) { return o == s });
         return r;
     }
     setSize(size) {
@@ -155,7 +160,7 @@ class Card {
 }
 
 class Button {
-    constructor(options){
+    constructor(options) {
         var defaults = {
             href: "#",
             className: "btn-primary",
@@ -167,7 +172,7 @@ class Button {
         this.options = _.assign(defaults, options);
         this.render();
     }
-   
+
     render() {
         this.html = null;
         this.html = $("<a>").attr({
@@ -194,8 +199,8 @@ class Button {
         this.html.find("i").remove();
         this.html.prepend($("<i>").addClass("fa fa-fw " + icon));
     }
-    setClassName(className){
+    setClassName(className) {
         this.options.className = className;
-        this.html.attr("class","").addClass(this.options.classNameDefault).addClass(this.options.className);
+        this.html.attr("class", "").addClass(this.options.classNameDefault).addClass(this.options.className);
     }
 }

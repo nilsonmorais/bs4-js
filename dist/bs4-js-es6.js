@@ -52,16 +52,17 @@ var Dropdown = function () {
     }, {
         key: 'addItem',
         value: function addItem(item) {
-            var itemDefaults = {
+            var _itemConfig = _.assign({
                 href: "#",
                 title: "Item",
-                header: false
-            };
-            var _item = _.assign(itemDefaults, item);
-            if (_item.header) {
-                _item = $("<h6>").addClass("dropdown-header").text(_item.title);
+                header: false,
+                value: undefined
+            }, item);
+            var _item = void 0;
+            if (_itemConfig.header) {
+                _item = $("<h6>").addClass("dropdown-header").text(_itemConfig.title);
             } else {
-                _item = $("<a>").addClass("dropdown-item").attr("href", _item.href).text(_item.title);
+                _item = $("<a>").addClass("dropdown-item").attr("href", _itemConfig.href).text(_itemConfig.title).attr('data-value', _itemConfig.value);
             }
             this.menu.append(_item);
             return _item;
@@ -75,9 +76,10 @@ var Dropdown = function () {
         }
     }, {
         key: 'setDefault',
-        value: function setDefault(title) {
-            this.menu.children().each(function (element) {
-                if ($(element).text() == title) {
+        value: function setDefault(selectedValue) {
+            this.menu.children('a').each(function (key, element) {
+                console.log(element.text, selectedValue);
+                if (element.text == selectedValue || $(element).attr("data-value") == selectedValue) {
                     $(element).append($("<i>").addClass("fa fa-check fa-fw text-muted"));
                 }
             });
@@ -106,7 +108,8 @@ var Card = function () {
             size: "sm",
             bodyContent: "",
             onShow: function onShow() {},
-            onHide: function onHide() {}
+            onHide: function onHide() {},
+            postCreateAction: function postCreateAction() {}
         };
         this.options = _.assign(defaults, options);
         this.id = _.uniqueId('card_');
@@ -117,9 +120,13 @@ var Card = function () {
         key: 'render',
         value: function render() {
             this.html = $("<div>").addClass(this.options.classNameDefault).addClass(this.options.className).css("max-width", "500px").attr("id", this.id);
-            this.cardContainer = this.html;
             this.setBody(this.options.bodyContent);
             this.setSize(this.options.size);
+        }
+    }, {
+        key: 'postCreate',
+        value: function postCreate() {
+            this.options.postCreateAction(this);
         }
     }, {
         key: 'addHeader',
@@ -128,7 +135,7 @@ var Card = function () {
             if (!_.isEmpty(this.options.headerClass)) {
                 this.header.addClass(this.options.headerClass);
             }
-            $(this.html).prepend(this.header);
+            this.html.prepend(this.header);
         }
     }, {
         key: 'addFooter',
@@ -137,7 +144,7 @@ var Card = function () {
             if (!_.isEmpty(this.options.footerClass)) {
                 this.footer.addClass(this.options.footerClass);
             }
-            $(this.html).append(this.footer);
+            this.html.append(this.footer);
         }
     }, {
         key: 'addBody',
@@ -146,23 +153,23 @@ var Card = function () {
             if (!_.isEmpty(this.options.bodyClass)) {
                 this.body.addClass(this.options.bodyClass);
             }
-            $(this.html).append(this.body);
+            this.html.append(this.body);
         }
     }, {
         key: 'setHeader',
         value: function setHeader(content) {
             if (_.isEmpty(this.header)) {
-                _Card.addHeader();
+                this.addHeader();
             }
-            $(this.header).html("").append(content);
+            this.header.html("").append(content);
         }
     }, {
         key: 'setFooter',
         value: function setFooter(content) {
             if (_.isEmpty(this.footer)) {
-                _Card.addFooter();
+                this.addFooter();
             }
-            $(this.footer).html("").append(content);
+            this.footer.html("").append(content);
         }
     }, {
         key: 'setBody',
@@ -170,7 +177,7 @@ var Card = function () {
             if (_.isEmpty(this.body)) {
                 this.addBody();
             }
-            $(this.body).html("").append(content);
+            this.body.html("").append(content);
         }
     }, {
         key: 'setHeaderClass',
@@ -191,7 +198,7 @@ var Card = function () {
     }, {
         key: 'getSize',
         value: function getSize() {
-            var s = $(this.html).css("max-width");
+            var s = this.html.css("max-width");
             var r = _.findKey(this.options.cardSizes, function (o) {
                 return o == s;
             });
