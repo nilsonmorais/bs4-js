@@ -21,7 +21,16 @@ var Dropdown = function () {
             "aria-haspopup": "true",
             "aria-expanded": "false",
             "id": this.id
-        }), $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id));
+        }), $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id)).attr({
+            "data-toggle": "tooltip",
+            "data-placement": "top",
+            "title": this.options.title
+        }).tooltip({
+            open: function open(event, ui) {
+                $(ui.tooltip).siblings(".tooltip").remove();
+            }
+        });
+
         this.setClass(this.options.className);
         this.setClassButton(this.options.buttonClassName);
         this.menu = this.html.find(".dropdown-menu");
@@ -78,7 +87,7 @@ var Dropdown = function () {
         key: 'setDefault',
         value: function setDefault(selectedValue) {
             this.menu.children('a').each(function (key, element) {
-                console.log(element.text, selectedValue);
+                // console.log(element.text, selectedValue);
                 if (element.text == selectedValue || $(element).attr("data-value") == selectedValue) {
                     $(element).append($("<i>").addClass("fa fa-check fa-fw text-muted"));
                 }
@@ -252,7 +261,11 @@ var Button = function () {
                     "data-toggle": "tooltip",
                     "data-placement": "top",
                     "title": this.options.title
-                }).tooltip();
+                }).tooltip({
+                    open: function open(event, ui) {
+                        $(ui.tooltip).siblings(".tooltip").remove();
+                    }
+                });
             }
             if (!_.isEmpty(this.options.icon)) {
                 this.setIcon(this.options.icon);

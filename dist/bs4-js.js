@@ -9,8 +9,7 @@ class Dropdown {
             buttonClassNameDefault: "btn btn-secondary btn-sm dropdown-toggle fa",
             buttonClassName: ""
         }, options);
-        this.html = $("<div>")
-            .append(
+        this.html = $("<div>").append(
             $("<button>").addClass(this.options.buttonClassNameDefault)
                 .attr({
                     "data-toggle": "dropdown",
@@ -20,7 +19,16 @@ class Dropdown {
                     "id": this.id
                 }),
             $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id)
-            );
+        ).attr({
+            "data-toggle": "tooltip",
+            "data-placement": "top",
+            "title": this.options.title
+        }).tooltip({
+            open: function (event, ui) {
+                $(ui.tooltip).siblings(".tooltip").remove();
+            }
+        });
+
         this.setClass(this.options.className);
         this.setClassButton(this.options.buttonClassName);
         this.menu = this.html.find(".dropdown-menu");
@@ -50,7 +58,7 @@ class Dropdown {
         if (_itemConfig.header) {
             _item = $("<h6>").addClass("dropdown-header").text(_itemConfig.title);
         } else {
-            _item = $("<a>").addClass("dropdown-item").attr("href", _itemConfig.href).text(_itemConfig.title).attr('data-value',_itemConfig.value);
+            _item = $("<a>").addClass("dropdown-item").attr("href", _itemConfig.href).text(_itemConfig.title).attr('data-value', _itemConfig.value);
         }
         this.menu.append(_item);
         return _item;
@@ -61,9 +69,9 @@ class Dropdown {
         return _item;
     }
     setDefault(selectedValue) {
-        this.menu.children('a').each( (key,element) => {
-            console.log(element.text, selectedValue);
-            if ((element.text == selectedValue)|| ($(element).attr("data-value") == selectedValue)) {
+        this.menu.children('a').each((key, element) => {
+            // console.log(element.text, selectedValue);
+            if ((element.text == selectedValue) || ($(element).attr("data-value") == selectedValue)) {
                 $(element).append($("<i>").addClass("fa fa-check fa-fw text-muted"));
             }
         });
@@ -188,7 +196,11 @@ class Button {
                 "data-toggle": "tooltip",
                 "data-placement": "top",
                 "title": this.options.title
-            }).tooltip();
+            }).tooltip({
+                open: function (event, ui) {
+                    $(ui.tooltip).siblings(".tooltip").remove();
+                }
+            });
         }
         if (!_.isEmpty(this.options.icon)) {
             this.setIcon(this.options.icon);
