@@ -7,5 +7,5 @@
 
 # Install
 
-- Add dist/bs4-js.js (Old Browsers)  or dist/bs4-js-es6.js on your document.
-- Create objects...
+- Add dist/bs4-js-old.js (Old Browsers)  or dist/bs4-js.js on your document.
+- Create objects... (TODO)

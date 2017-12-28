@@ -22,12 +22,9 @@ class Dropdown {
         ).attr({
             "data-toggle": "tooltip",
             "data-placement": "top",
+            "data-trigger": "hover",
             "title": this.options.title
-        }).tooltip({
-            open: function (event, ui) {
-                $(ui.tooltip).siblings(".tooltip").remove();
-            }
-        });
+        }).tooltip();
 
         this.setClass(this.options.className);
         this.setClassButton(this.options.buttonClassName);
@@ -195,12 +192,9 @@ class Button {
             this.html.attr({
                 "data-toggle": "tooltip",
                 "data-placement": "top",
+                "data-trigger": "hover",
                 "title": this.options.title
-            }).tooltip({
-                open: function (event, ui) {
-                    $(ui.tooltip).siblings(".tooltip").remove();
-                }
-            });
+            }).tooltip();
         }
         if (!_.isEmpty(this.options.icon)) {
             this.setIcon(this.options.icon);

@@ -24,12 +24,9 @@ var Dropdown = function () {
         }), $("<div>").addClass("dropdown-menu dropdown-menu-right").attr("aria-labelledby", this.id)).attr({
             "data-toggle": "tooltip",
             "data-placement": "top",
+            "data-trigger": "hover",
             "title": this.options.title
-        }).tooltip({
-            open: function open(event, ui) {
-                $(ui.tooltip).siblings(".tooltip").remove();
-            }
-        });
+        }).tooltip();
 
         this.setClass(this.options.className);
         this.setClassButton(this.options.buttonClassName);
@@ -260,12 +257,9 @@ var Button = function () {
                 this.html.attr({
                     "data-toggle": "tooltip",
                     "data-placement": "top",
+                    "data-trigger": "hover",
                     "title": this.options.title
-                }).tooltip({
-                    open: function open(event, ui) {
-                        $(ui.tooltip).siblings(".tooltip").remove();
-                    }
-                });
+                }).tooltip();
             }
             if (!_.isEmpty(this.options.icon)) {
                 this.setIcon(this.options.icon);
